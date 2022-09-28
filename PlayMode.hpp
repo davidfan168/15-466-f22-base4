@@ -5,6 +5,10 @@
 
 #include <glm/glm.hpp>
 
+#include <hb.h>
+#include <hb-ft.h>
+
+#include <map>
 #include <vector>
 #include <deque>
 
@@ -17,6 +21,9 @@ struct PlayMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
+	// helper functions
+	void draw_text(std::string text, float x, float y, float scale);
+
 	//----- game state -----
 
 	//input tracking:
@@ -25,24 +32,44 @@ struct PlayMode : Mode {
 		uint8_t pressed = 0;
 	} left, right, down, up;
 
-	//local copy of the game scene (so code can change it during gameplay):
-	Scene scene;
+	FT_Library ft_library;
+	FT_Face ft_face;
+	FT_Error ft_error;
 
-	//hexapod leg to wobble:
-	Scene::Transform *hip = nullptr;
-	Scene::Transform *upper_leg = nullptr;
-	Scene::Transform *lower_leg = nullptr;
-	glm::quat hip_base_rotation;
-	glm::quat upper_leg_base_rotation;
-	glm::quat lower_leg_base_rotation;
-	float wobble = 0.0f;
+	// hb_font_t *hb_font;
 
-	glm::vec3 get_leg_tip_position();
+	struct Character {
+		unsigned int TextureID;  // ID handle of the glyph texture
+		glm::ivec2   Size;       // Size of glyph
+		glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
+		unsigned int Advance;    // Offset to advance to next glyph
+	};
 
-	//music coming from the tip of the leg (as a demonstration):
-	std::shared_ptr< Sound::PlayingSample > leg_tip_loop;
+	std::map<char, Character> Characters;
+
+	GLuint VAO, VBO;
+	GLuint vertex_shader, fragment_shader;
+	GLuint program;
+
+	const char* vShaderCode = ""
+		"#version 330\n"
+        "in vec4 position;\n"
+        "out vec2 texCoords;\n"
+		"uniform mat4 projection;"
+        "void main(void) {\n"
+        "    gl_Position = projection * vec4(position.xy, 0, 1);\n"
+        "    texCoords = position.zw;\n"
+        "}\n";
 	
-	//camera:
-	Scene::Camera *camera = nullptr;
-
+	const char *fShaderCode = ""
+		"#version 330 core\n"
+		"in vec2 TexCoords;\n"
+		"out vec4 color;\n"
+		"uniform sampler2D text;\n"
+		"uniform vec3 textColor;\n"
+		"void main(){\n"
+			"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);\n"
+			"color = vec4(textColor, 1.0) * sampled;\n"
+		"}\n";
+	
 };
