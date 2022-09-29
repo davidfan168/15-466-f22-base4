@@ -22,9 +22,24 @@ struct PlayMode : Mode {
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
 	// helper functions
+	std::vector<std::string> split(std::string s, std::string delim);
 	void draw_text(std::string text, float x, float y, glm::uvec2 const &drawable_size);
+	void draw_texts(std::string text, float x, float y, glm::uvec2 const &drawable_size);
+	void load_data();
+
 
 	//----- game state -----
+
+	typedef struct State {
+		std::string text;
+		uint8_t a;
+		uint8_t d;
+		uint8_t w;
+		uint8_t s;
+	} State;
+
+	std::vector<State> states;
+	State current_state;
 
 	//input tracking:
 	struct Button {

@@ -1,0 +1,7 @@
+You are at your door when you realize you forgot your keys.\nWhat should you do?\n\nPress the corresponding buttons: \nA)Look to your left\nD)Look to your right\nW)Open the door	2	3	4	1
+You look to your left, but you can only see the empty street.	1	1	1	1
+You look to your right, but you can only see the empty street.	1	1	1	1
+You look at the door. You don't have keys but maybe you can try something.	5	5	5	5
+What should you do?\n\nA)Look to your left\nD)Look to your right\nW)Open the door	6	7	8	5
+You look to your left, but you can only see the empty street.	5	5	5	5
+You look to your right, but you can only see the empty street.	5	5	5	5
