@@ -42,26 +42,25 @@ struct PlayMode : Mode {
 	GLuint vertex_shader, fragment_shader;
 	GLuint program;
 	GLuint texture;
+	GLuint sampler;
 
 	const char* vShaderCode = ""
-		"#version 330\n"
+        "#version 330\n"
         "in vec4 position;\n"
         "out vec2 texCoords;\n"
-		"uniform mat4 projection;"
         "void main(void) {\n"
-        "    gl_Position = projection * vec4(position.xy, 0, 1);\n"
+        "    gl_Position = vec4(position.xy, 0, 1);\n"
         "    texCoords = position.zw;\n"
         "}\n";
 	
 	const char *fShaderCode = ""
-		"#version 330 core\n"
-		"in vec2 TexCoords;\n"
-		"out vec4 color;\n"
-		"uniform sampler2D text;\n"
-		"uniform vec3 textColor;\n"
-		"void main(){\n"
-			"vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);\n"
-			"color = vec4(textColor, 1.0) * sampled;\n"
-		"}\n";
+        "#version 330\n"
+        "uniform sampler2D tex;\n"
+        "in vec2 texCoords;\n"
+        "out vec4 fragColor;\n"
+		"const vec4 color = vec4(1, 1, 1, 1);\n"
+        "void main(void) {\n"
+        "    fragColor = vec4(1, 1, 1, texture(tex, texCoords).r) * color;\n"
+        "}\n";
 	
 };

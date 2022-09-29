@@ -101,9 +101,6 @@ PlayMode::PlayMode() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	//TODO: will figure out what this does later
-	glGenTextures(1, &texture);
-
 
 	/* Initialize Shader */
 	// vertex Shader
@@ -154,8 +151,8 @@ PlayMode::PlayMode() {
 }
 
 PlayMode::~PlayMode() {
-	// FT_Done_Face(ft_face);
-	// FT_Done_FreeType(ft_library);
+	FT_Done_Face(ft_face);
+	FT_Done_FreeType(ft_library);
 }
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
@@ -203,9 +200,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glUseProgram(program);
-	glUniform3f(glGetUniformLocation(program, "textColor"), 1, 1, 1);
 
-	draw_text("A", 25.0f, 25.0f, drawable_size);
+	draw_text("A", -0.8f, 0.8f, drawable_size);
 
 	GL_ERRORS();
 }
