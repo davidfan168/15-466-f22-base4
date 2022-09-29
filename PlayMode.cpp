@@ -12,99 +12,41 @@
 
 #include <random>
 
-void PlayMode::draw_text(std::string text, float x, float y, float scale) {
+void PlayMode::draw_text(std::string text, float x, float y, glm::uvec2 const &drawable_size) {
 	/* Create hb-buffer and populate. */
-	// hb_buffer_t *hb_buffer;
-	// hb_buffer = hb_buffer_create();
-	// hb_buffer_add_utf8(hb_buffer, text, -1, 0, -1);
-	// hb_buffer_guess_segment_properties(hb_buffer);
+	hb_buffer_t *hb_buffer;
+	hb_buffer = hb_buffer_create();
+	hb_buffer_add_utf8(hb_buffer, text.c_str(), -1, 0, -1);
+	hb_buffer_guess_segment_properties(hb_buffer);
 
 	// /* Shape it! */
-	// hb_shape(hb_font, hb_buffer, NULL, 0);
+	hb_shape(hb_font, hb_buffer, NULL, 0);
 
 	// /* Get glyph information and positions out of the buffer. */
-	// unsigned int len = hb_buffer_get_length(hb_buffer);
-	// hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
-	// hb_glyph_position_t *pos = hb_buffer_get_glyph_positions(hb_buffer, NULL);
+	unsigned int len = hb_buffer_get_length(hb_buffer);
+	hb_glyph_info_t *info = hb_buffer_get_glyph_infos(hb_buffer, NULL);
+	hb_glyph_position_t *pos = hb_buffer_get_glyph_positions(hb_buffer, NULL);
 
 
 	/* activate corresponding render state */
-	// s.Use();
-	// glUniform3f(glGetUniformLocation(s.Program, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 
-	/* iterate through all characters in text */
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
-		Character ch = Characters[*c];
+	/* Draw the codepoints on screen. */
+	for (unsigned int i = 0; i < len; i++) {
+		hb_codepoint_t glyph_index = info[i].codepoint;
 
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-		float w = ch.Size.x * scale;
-		float h = ch.Size.y * scale;
-		// update VBO for each character
-		float vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0f, 0.0f },            
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }           
-		};
-		// render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		// update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-// snippets from https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-freetype.c
-// and https://learnopengl.com/In-Practice/Text-Rendering
-// and https://learnopengl.com/Getting-started/Shaders
-PlayMode::PlayMode() {
-
-	// https://fonts.google.com/specimen/Roboto
-	std::string regular_font = data_path("./Roboto/Roboto-Regular.ttf");
-	
-
-	constexpr int FONT_SIZE = 100;
-
-	/* Initialize FreeType and create FreeType font face. */
-	if ((ft_error = FT_Init_FreeType (&ft_library)))
-		abort();
-	if ((ft_error = FT_New_Face (ft_library, regular_font, 0, &ft_face)))
-		abort();
-	if ((ft_error = FT_Set_Char_Size (ft_face, FONT_SIZE*64, FONT_SIZE*64, 0, 0)))
-		abort();
-
-
-	/* Generate and store glyphs */
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
-
-	for (unsigned char c = 0; c < 128; c++)
-	{
-		// load character glyph 
-		if (FT_Load_Char(ft_face, c, FT_LOAD_RENDER))
-		{
-			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-			continue;
+		ft_error = FT_Load_Glyph( ft_face, glyph_index, FT_LOAD_DEFAULT );
+		if ( ft_error ) {
+			std::cout << "Failed to load glyph.\n";
+    		continue;
 		}
-		// generate texture
-		unsigned int texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		ft_error = FT_Render_Glyph( ft_face->glyph, FT_RENDER_MODE_NORMAL );
+		if ( ft_error ) {
+			std::cout << "Failed to render glyph.\n";
+    		continue;
+		}
+
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
@@ -116,20 +58,43 @@ PlayMode::PlayMode() {
 			GL_UNSIGNED_BYTE,
 			ft_face->glyph->bitmap.buffer
 		);
-		// set texture options
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// now store character for later use
-		Character character = {
-			texture, 
-			glm::ivec2(ft_face->glyph->bitmap.width, ft_face->glyph->bitmap.rows),
-			glm::ivec2(ft_face->glyph->bitmap_left, ft_face->glyph->bitmap_top),
-			ft_face->glyph->advance.x
+
+
+		float xpos = x + pos[i].x_offset;
+		float ypos = y + pos[i].x_offset;
+
+		float w = ft_face->glyph->bitmap.width / drawable_size.x;
+		float h = ft_face->glyph->bitmap.rows / drawable_size.y;
+		// update VBO for each character
+		float vertices[6][4] = {
+			{ xpos,     ypos + h,   0.0f, 0.0f },            
+			{ xpos,     ypos,       0.0f, 1.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+			{ xpos + w, ypos + h,   1.0f, 0.0f }           
 		};
-		Characters.insert(std::pair<char, Character>(c, character));
+
+		// bind buffer and texture
+		glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += pos[i].x_advance;
+		y += pos[i].y_advance;
 	}
+	// glBindVertexArray(0);
+	// glBindTexture(GL_TEXTURE_2D, 0);
+
+	GL_ERRORS();
+}
+
+// snippets from https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-freetype.c
+// and https://learnopengl.com/In-Practice/Text-Rendering
+// and https://learnopengl.com/Getting-started/Shaders
+PlayMode::PlayMode() {
 
 	/* Create VAO and VBO */
 	glGenVertexArrays(1, &VAO);
@@ -160,21 +125,35 @@ PlayMode::PlayMode() {
 	glLinkProgram(program);
 	
 	// delete the shaders as they're linked into our program now and no longer necessary
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
+	// glDeleteShader(vertex_shader);
+	// glDeleteShader(fragment_shader);
 
 
 	/* Initialize some GL states*/
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0, 0, 0, 1);
 	
+	// https://fonts.google.com/specimen/Roboto
+	std::string regular_font = data_path("./Roboto/Roboto-Regular.ttf");
+
+	constexpr int FONT_SIZE = 100;
+	/* Initialize FreeType and create FreeType font face. */
+	if ((ft_error = FT_Init_FreeType (&ft_library)))
+		abort();
+	if ((ft_error = FT_New_Face (ft_library, regular_font.c_str(), 0, &ft_face)))
+		abort();
+	if ((ft_error = FT_Set_Char_Size (ft_face, FONT_SIZE*64, FONT_SIZE*64, 0, 0)))
+		abort();
 
 	/* Create hb-ft font. */
-	// hb_font = hb_ft_font_create (ft_face, NULL);
+	hb_font = hb_ft_font_create (ft_face, NULL);
 
 	// load something at the start of game
+	
+	GL_ERRORS();
 }
 
 PlayMode::~PlayMode() {
@@ -218,10 +197,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
-	draw_text("HI1234567890!", 25.0f, 25.0f, 1.0f);
+	glUseProgram(program);
+	glUniform3f(glGetUniformLocation(program, "textColor"), 1, 1, 1);
+
+	draw_text("A", 25.0f, 25.0f, drawable_size);
 
 	GL_ERRORS();
 }

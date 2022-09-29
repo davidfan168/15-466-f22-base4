@@ -22,7 +22,7 @@ struct PlayMode : Mode {
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
 	// helper functions
-	void draw_text(std::string text, float x, float y, float scale);
+	void draw_text(std::string text, float x, float y, glm::uvec2 const &drawable_size);
 
 	//----- game state -----
 
@@ -36,16 +36,7 @@ struct PlayMode : Mode {
 	FT_Face ft_face;
 	FT_Error ft_error;
 
-	// hb_font_t *hb_font;
-
-	struct Character {
-		unsigned int TextureID;  // ID handle of the glyph texture
-		glm::ivec2   Size;       // Size of glyph
-		glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
-		unsigned int Advance;    // Offset to advance to next glyph
-	};
-
-	std::map<char, Character> Characters;
+	hb_font_t *hb_font;
 
 	GLuint VAO, VBO;
 	GLuint vertex_shader, fragment_shader;
