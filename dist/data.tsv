@@ -1,7 +1,14 @@
-You are at your door when you realize you forgot your keys.\nWhat should you do?\n\nPress the corresponding buttons: \nA)Look to your left\nD)Look to your right\nW)Open the door	2	3	4	1
+You are at your door when you realize you forgot your keys.\nWhat should you do?\n\nPress the corresponding buttons: \nA) Look to your left\nD) Look to your right\nW) Open the door	2	3	4	1
 You look to your left, but you can only see the empty street.	1	1	1	1
 You look to your right, but you can only see the empty street.	1	1	1	1
-You look at the door. You don't have keys but maybe you can try something.	5	5	5	5
-What should you do?\n\nA)Look to your left\nD)Look to your right\nW)Open the door	6	7	8	5
+You look at the door. \nYou do not have keys but maybe you can try something.	5	5	5	5
+What should you do?\n\nA) Look to your left\nD) Look to your right\nW) Open the door	6	7	8	5
 You look to your left, but you can only see the empty street.	5	5	5	5
 You look to your right, but you can only see the empty street.	5	5	5	5
+Smash! You can hear your lock breaking under your smashes.	9	9	9	9
+What should you do?\n\nA) Look to your left\nD) Look to your right\nW) Open the door	10	11	12	9
+You look to your left, but you can only see the empty street.	9	9	9	9
+You look to your right, but you can only see the empty street.	9	9	9	9
+After another loud smash you managed to destroy your lock \nand also open your door.	13	13	13	13
+You have a good nights rest.	14	14	14	14
+In a stroke of genius, you managed to lock yourself in your house.\nWhat do you want to do?\n\nA) Go to the kitchen\nD) Go to the living room\nW) Go to the door.	15	16	17	14

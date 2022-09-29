@@ -10,9 +10,11 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <algorithm>
 #include <fstream>
 #include <random>
 
+// https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 std::vector<std::string> PlayMode::split(std::string s, std::string delim) {
 	auto start = 0U;
     auto end = s.find(delim);
@@ -31,7 +33,10 @@ std::vector<std::string> PlayMode::split(std::string s, std::string delim) {
 void PlayMode::draw_texts(std::string text, float x, float y, glm::uvec2 const &drawable_size) {
 	auto lines = split(text, "\\n");
 	for (int i = 0; i < lines.size(); i++) {
-		draw_text(lines[i], x, y - 0.1f*i, drawable_size);
+		std::string s = lines[i];
+		// https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case
+		std::transform(s.begin(), s.end(),s.begin(), ::toupper);
+		draw_text(s, x, y - 0.1f*i, drawable_size);
 	}
 }
 
@@ -256,7 +261,7 @@ void PlayMode::update(float elapsed) {
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

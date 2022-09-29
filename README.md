@@ -1,22 +1,27 @@
-# (TODO: your game's title)
+# Escape the Room
 
-Author: (TODO: your name)
+Author: David Zelong Fan
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: An escape room game that imitates natural movement and allows the player to smash items in the room.
 
-Text Drawing: (TODO: how does the text drawing in this game work? Is text precomputed? Rendered at runtime? What files or utilities are involved?)
+Text Drawing: Text is rendered at runtime. A .ttf file is used to generate a FreeType face, used to generate a harfbuzz font. We then use harfbuzz codrpoints to generate glyphs in FreeType, and position the glyphs using harfbuzz position values. (The position doesn't really work and I ran out of time, so I forced everything into upper case).
 
-Choices: (TODO: how does the game store choices and narrative? How are they authored? Anything nifty you want to point out?)
+Choices: The game stores all the states in a single finite state machine. I really wanted to try this, but (as expected) this is not a good structure. Every new item would almost double the number of states.
 
 Screen Shot:
 
 ![Screen Shot](screenshot.png)
 
 How To Play:
+Press WASD to make choices and progress through the game.
 
-(TODO: describe the controls and (if needed) goals/strategy.)
-
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources: 
+https://fonts.google.com/specimen/Roboto
+https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-freetype.c
+https://learnopengl.com/In-Practice/Text-Rendering
+https://learnopengl.com/Getting-started/Shaders
+https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case
+https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 
 This game was built with [NEST](NEST.md).
 
