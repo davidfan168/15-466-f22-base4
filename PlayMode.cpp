@@ -28,10 +28,6 @@ void PlayMode::draw_text(std::string text, float x, float y, glm::uvec2 const &d
 	hb_glyph_position_t *pos = hb_buffer_get_glyph_positions(hb_buffer, NULL);
 
 
-	/* activate corresponding render state */
-	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(VAO);
-
 	/* Draw the codepoints on screen. */
 	for (unsigned int i = 0; i < len; i++) {
 		hb_codepoint_t glyph_index = info[i].codepoint;
@@ -85,8 +81,6 @@ void PlayMode::draw_text(std::string text, float x, float y, glm::uvec2 const &d
 		x += pos[i].x_advance;
 		y += pos[i].y_advance;
 	}
-	// glBindVertexArray(0);
-	// glBindTexture(GL_TEXTURE_2D, 0);
 
 	GL_ERRORS();
 }
@@ -105,7 +99,10 @@ PlayMode::PlayMode() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);    
+	glBindVertexArray(0);
+
+	//TODO: will figure out what this does later
+	glGenTextures(1, &texture);
 
 
 	/* Initialize Shader */
@@ -157,8 +154,8 @@ PlayMode::PlayMode() {
 }
 
 PlayMode::~PlayMode() {
-	FT_Done_Face(ft_face);
-	FT_Done_FreeType(ft_library);
+	// FT_Done_Face(ft_face);
+	// FT_Done_FreeType(ft_library);
 }
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
@@ -199,6 +196,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// glBindSampler(0, sampler);
+	glBindVertexArray(VAO);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glUseProgram(program);
 	glUniform3f(glGetUniformLocation(program, "textColor"), 1, 1, 1);
 

@@ -41,6 +41,7 @@ struct PlayMode : Mode {
 	GLuint VAO, VBO;
 	GLuint vertex_shader, fragment_shader;
 	GLuint program;
+	GLuint texture;
 
 	const char* vShaderCode = ""
 		"#version 330\n"
