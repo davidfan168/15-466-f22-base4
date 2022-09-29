@@ -36,7 +36,7 @@ void PlayMode::draw_texts(std::string text, float x, float y, glm::uvec2 const &
 		std::string s = lines[i];
 		// https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case
 		std::transform(s.begin(), s.end(),s.begin(), ::toupper);
-		draw_text(s, x, y - 0.1f*i, drawable_size);
+		draw_text(s, x, y - 0.15f*i, drawable_size);
 	}
 }
 

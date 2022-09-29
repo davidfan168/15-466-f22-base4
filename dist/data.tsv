@@ -11,4 +11,25 @@ You look to your left, but you can only see the empty street.	9	9	9	9
 You look to your right, but you can only see the empty street.	9	9	9	9
 After another loud smash you managed to destroy your lock \nand also open your door.	13	13	13	13
 You have a good nights rest.	14	14	14	14
-In a stroke of genius, you managed to lock yourself in your house.\nWhat do you want to do?\n\nA) Go to the kitchen\nD) Go to the living room\nW) Go to the door.	15	16	17	14
+You locked yourself in your house.\nWhat do you want to do?\n\nA) Go to the kitchen\nD) Go to the bathroom\nW) Go to the door.	15	29	33	14
+You are now in the kitchen\n\nA) grab a knife \nW) break the wall \nD) drink some water \nS) go back to living room	28	16	17	14
+You drank some water. You feel much better now	15	15	15	15
+You tried to break the wall with your fist, \nbut you may need to try harder than that\n\nWhat do you want to do next? \nKeep punching with w?	15	15	18	15
+You continue to punch the wall with all your might, but nothing happened	15	15	19	15
+You punched the wall even harder, yet nothing	15	15	20	15
+You kept punching	15	15	21	15
+And kept punching	15	15	22	15
+And kept punching	15	15	23	15
+You've been punching for quite a while	15	15	24	15
+You've been punching for quite a while	15	15	25	15
+You've been punching for quite a while	15	15	26	15
+You broke the wall	27	27	27	27
+Congratulations!!!\n\nYou Escaped the room!	27	27	27	27
+You grabbed a knife.\nYour knife is now in your inventory.\n\nFor some reason you feel like you can carry an infinite amount of knives \nin your inventory	15	15	15	15
+You are now in the bathroom\n\nA) take a shower \nD) drink some water \nS) go back to living room	30	31	29	14
+You took a shower	29	29	29	29
+You drank some water	32	32	32	32
+From the toilet\nYeah I forgot to mention that	29	29	29	29
+You can unlock the door by turning the doorknob.\nbut this is not interesting.\n\nAre you sure you want to unlock the door?\nW) Yes, unlock the door\nS) No, go back to living room	31	31	34	14
+Are you REALLY sure?\nW) Yes\nS) No	34	34	35	14
+Alright, you got out of the room.	35	35	35	35
